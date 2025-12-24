@@ -1,173 +1,359 @@
 <!DOCTYPE html>
- <style>
-        body {
-            background-image: url('./WTP.png');
-            background-size: cover;
-            color: #2e7d32;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-    </style>
-    <script>
-        document.addEventListener("contextmenu", function(e) {
-            e.preventDefault();
-        });
-
-        document.addEventListener("keydown", function(e) {
-            if (e.key === "F12") {
-                e.preventDefault();
-            }
-        });
-
-        document.addEventListener("copy", function(e) {
-            e.preventDefault();
-        });
-    </script>
-</head>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <link rel="shortcut icon" href="./assets/icon.ico" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文天玩</title>
-    <meta name="description" content="文天玩是专为二次元科技修仙用户打造的大世界开放式沙盒游戏，提供海量的资源、便捷的游戏玩法，适合所有年龄段用户轻松上手，享受游戏的无限乐趣。">
-    <meta name="keywords" content="文天玩">
-    <link rel="stylesheet" href="animate.min.css">
-    <link href="all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://static.codemao.cn/pickduck/Syj5sEtDJe.css?hash=FgiP1ztAsOak99gkEwds2dnasiir">
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "文天玩",
-        "url": "https://www.wentianplay.cn",
-        "description": "文天玩是专为二次元科技修仙用户打造的大世界开放式沙盒游戏，提供海量的资源、便捷的游戏玩法，适合所有年龄段用户轻松上手，享受游戏的无限乐趣。"
-        "keywords": "文天玩, WenTianPlay,彬,天彬, 文天星辰, 天彬星辰,文天风云"
-    }
-    </script>
+    <title>WenTianPlay 认证系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+        
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .status-container {
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loading {
+            display: none;
+        }
+        
+        .success, .error {
+            display: none;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0e0e0;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .status-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .success .status-icon {
+            color: #10b981;
+        }
+        
+        .error .status-icon {
+            color: #ef4444;
+        }
+        
+        .status-message {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        
+        .status-details {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        .countdown {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+        
+        .manual-redirect {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-outline {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn-outline:hover {
+            background: #f8f9fa;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="theme-switch">
-            <button onclick="setTheme('light')" id="lightBtn">
-                <i class="fas fa-sun"></i>
-            </button>
-            <button onclick="setTheme('dark')" id="darkBtn" class="active">
-                <i class="fas fa-moon"></i>
-            </button>
+    <div class="auth-container">
+        <div class="logo">WenTianPlay 认证系统</div>
+        
+        <div class="status-container">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div class="status-message">正在验证 API 对接...</div>
+                <div class="status-details">正在连接至 api.wentianplay.com</div>
+            </div>
+            
+            <div class="success" id="success">
+                <div class="status-icon">✓</div>
+                <div class="status-message">认证成功！</div>
+                <div class="status-details">API 对接验证通过，正在跳转</div>
+                <div class="countdown" id="successCountdown">5秒后自动跳转</div>
+            </div>
+            
+            <div class="error" id="error">
+                <div class="status-icon">✗</div>
+                <div class="status-message">认证失败</div>
+                <div class="status-details" id="errorDetails">API 对接验证未通过</div>
+                <div class="countdown" id="errorCountdown">5秒后自动跳转</div>
+            </div>
         </div>
-        <div class="status-indicator">
-            <div class="status-dot" id="statusDot"></div>
-            <span id="statusText">检查中...</span>
+        
+        <div class="manual-redirect" id="manualRedirect" style="display: none;">
+            <a href="https://api.wentianplay.com" class="btn" id="successBtn">立即访问 API</a>
+            <a href="https://www.WenTianPlay.cn" class="btn btn-outline" id="errorBtn">返回首页</a>
         </div>
-    </header>
-
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <div class="hero-text animate__animated animate__fadeInLeft">
-                    <h1>文天玩WenTianPlay</h1>
-                    <p class="subtitle">
-                        文天玩是专为二次元科技修仙用户打造的大世界开放式沙盒游戏，提供海量的资源、便捷的游戏玩法，适合所有年龄段用户轻松上手，享受游戏的无限乐趣。
-                    </p>
-                    <div class="cta-group">
-                        <a href="https://WenTianPlay.net" class="button button-primary">
-                            <i class="fas fa-download"></i>
-                            立即下载
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-             <section class="features">
-            <div class="feature-card animate__animated animate__fadeInUp">
-            <section class="stats">
-            <div class="stat-item">
-                <h3>8900+</h3>
-                <p>游戏NPC</p>
-            </div>
-            <div class="stat-item">
-                <h3>3100+</h3>
-                <p>每时在线</p>
-            </div>
-            <div class="stat-item">
-                <h3>28000+</h3>
-                <p>每天在线</p>
-            </div>
-            <div class="feature-card animate__animated animate__fadeInUp">
-            <section class="stats">
-            <div class="stat-item">
-            <div class="stat-item">
-                <h3>72000+</h3>
-                <p>每周在线</p>
-            </div>
-            <div class="stat-item">            
-                <h3>120000+</h3>
-                <p>每月在线</p>
-            </div>
-            <div class="stat-item">
-                <h3>240000+</h3>
-                <p>每季在线</p>
-            </div>
-            <div class="feature-card animate__animated animate__fadeInUp">
-            <section class="stats">
-            <div class="stat-item">
-            <div class="stat-item">
-                <h3>564200+</h3>
-                <p>累计注册</p>
-            </div>
-        </section>
-   <section class="features">
-            <div class="feature-card animate__animated animate__fadeInUp">
-                 <div class="feature-icon">
-                    <i class="fas fa-mobile-alt fa-lg"></i>
-                </div>
-                <h2>虚拟货币</h2>
-                <p class="feature-description">
-                    天斯拉币，简称天币，货币代码:TB，是与起点小说中《彬》以及《天彬》的货币，可用来购买所需的资源，满足您的多样化需求。
-                </p>
-                <div class="tooltip">点击了解更多</div>
-            </div>
-
-            <div class="feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                <div class="feature-icon">
-                    <i class="fas fa-users fa-lg"></i>
-                </div>
-                <h2>探险之旅</h2>
-                <p class="feature-description">
-                    加入上千的NPC，搭配着文天玩WenTianPlay Ai大模型，解决探险中的疑惑，结识志同道合的好友，共同探索世界的无限可能。
-                </p>
-                <div class="tooltip">点击了解更多</div>
-            </div>
-
-            <div class="feature-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt fa-lg"></i>
-                </div>
-                <h2>关于我们</h2>
-                <p class="feature-description">
-                    文天玩创立于2024年5月3日，继承了2010年以及2017年的前身所有权，致力于探险者提供优质的资源和游戏体验，不断创新优化，提升用户体验。
-                </p>
-                <div class="tooltip">点击了解更多</div>
-            </div>
-        </section>
-
-    <script src="jquery.min.js"></script>
-    <script src="https://static.codemao.cn/pickduck/HJ0nsVYwJx.js?hash=FunLi-RRpByx-zVVHzoH9kjENAa5"></script>
- <div class="footer">
-        <p>版权所有 &copy; 2023 文天玩WenTianPlay</p>
-        <a href="http://beian.miit.gov.cn/">备案号</a>
+        
+        <div class="footer">
+            © 2024 WenTianPlay 认证系统 | API 对接验证
+        </div>
     </div>
-   <div class="links">
-    <h2>友情链接</h2>
-    <a href="https://www.WenTianPlay.com" target="_blank">导航站</a>
-    <a href="https://API.WenTianPlay.com" target="_blank">国际站</a>
-    <a href="https://www.WenTianPlay.net" target="_blank">数据站</a>
-</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingEl = document.getElementById('loading');
+            const successEl = document.getElementById('success');
+            const errorEl = document.getElementById('error');
+            const manualRedirectEl = document.getElementById('manualRedirect');
+            const errorDetailsEl = document.getElementById('errorDetails');
+            const successCountdownEl = document.getElementById('successCountdown');
+            const errorCountdownEl = document.getElementById('errorCountdown');
+            const successBtn = document.getElementById('successBtn');
+            const errorBtn = document.getElementById('errorBtn');
+            
+            let countdown = 5;
+            let countdownInterval;
+            
+            // 显示加载状态
+            loadingEl.style.display = 'flex';
+            
+            // API 验证函数
+            async function verifyApi() {
+                try {
+                    // 添加时间戳防止缓存
+                    const apiUrl = 'https://api.wentianplay.com/api/api.json?' + new Date().getTime();
+                    
+                    // 使用 fetch API 获取数据
+                    const response = await fetch(apiUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Cache-Control': 'no-cache'
+                        },
+                        mode: 'cors', // 尝试跨域请求
+                        credentials: 'omit'
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP 错误: ${response.status}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // 将响应转换为字符串，检查是否包含目标域名
+                    const jsonString = JSON.stringify(data);
+                    
+                    if (jsonString.includes('api.wentianwan.com')) {
+                        return true;
+                    } else {
+                        errorDetailsEl.textContent = 'API 响应中未找到 api.wentianwan.com';
+                        return false;
+                    }
+                    
+                } catch (error) {
+                    console.error('API 验证错误:', error);
+                    
+                    // 尝试使用 JSONP 方式（如果 API 支持）
+                    try {
+                        const result = await jsonpRequest('https://api.wentianplay.com/api/api.json');
+                        if (result && JSON.stringify(result).includes('api.wentianwan.com')) {
+                            return true;
+                        }
+                        errorDetailsEl.textContent = 'API 响应中未找到 api.wentianwan.com';
+                        return false;
+                    } catch (jsonpError) {
+                        console.error('JSONP 也失败:', jsonpError);
+                        errorDetailsEl.textContent = `无法连接到 API: ${error.message}`;
+                        return false;
+                    }
+                }
+            }
+            
+            // JSONP 请求函数（备选方案）
+            function jsonpRequest(url) {
+                return new Promise((resolve, reject) => {
+                    const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                    const script = document.createElement('script');
+                    
+                    window[callbackName] = function(data) {
+                        delete window[callbackName];
+                        document.body.removeChild(script);
+                        resolve(data);
+                    };
+                    
+                    script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+                    script.onerror = function() {
+                        delete window[callbackName];
+                        document.body.removeChild(script);
+                        reject(new Error('JSONP 请求失败'));
+                    };
+                    
+                    document.body.appendChild(script);
+                    
+                    // 设置超时
+                    setTimeout(() => {
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                            document.body.removeChild(script);
+                            reject(new Error('JSONP 请求超时'));
+                        }
+                    }, 10000);
+                });
+            }
+            
+            // 开始倒计时
+            function startCountdown(isSuccess) {
+                const countdownEl = isSuccess ? successCountdownEl : errorCountdownEl;
+                
+                countdownInterval = setInterval(() => {
+                    countdown--;
+                    countdownEl.textContent = `${countdown}秒后自动跳转`;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(countdownInterval);
+                        if (isSuccess) {
+                            window.location.href = 'https://api.wentianplay.com';
+                        } else {
+                            window.location.href = 'https://www.WenTianPlay.cn';
+                        }
+                    }
+                }, 1000);
+            }
+            
+            // 显示结果
+            function showResult(isSuccess) {
+                loadingEl.style.display = 'none';
+                
+                if (isSuccess) {
+                    successEl.style.display = 'block';
+                    startCountdown(true);
+                } else {
+                    errorEl.style.display = 'block';
+                    startCountdown(false);
+                }
+                
+                // 3秒后显示手动跳转按钮
+                setTimeout(() => {
+                    manualRedirectEl.style.display = 'block';
+                }, 3000);
+            }
+            
+            // 开始验证
+            verifyApi().then(isValid => {
+                showResult(isValid);
+            }).catch(error => {
+                console.error('验证过程出错:', error);
+                errorDetailsEl.textContent = '验证过程发生错误: ' + error.message;
+                showResult(false);
+            });
+            
+            // 手动跳转按钮事件
+            successBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                clearInterval(countdownInterval);
+                window.location.href = 'https://api.wentianplay.com';
+            });
+            
+            errorBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                clearInterval(countdownInterval);
+                window.location.href = 'https://www.WenTianPlay.cn';
+            });
+        });
+    </script>
 </body>
 </html>
